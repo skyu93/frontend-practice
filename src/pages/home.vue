@@ -2,12 +2,14 @@
 import Menu from './Menu.vue';
 import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { animateCards, MENUS } from './menu.ts';
+import { useRouter } from 'vue-router';
 
 const currentIndex = ref(MENUS.length-1);
 const menuContainer = ref<HTMLElement>();
 const menus = computed((): Element[] => {
   return Array.from(menuContainer.value?.children ?? [])
 })
+const router = useRouter()
 
 const handleWheel = (event: WheelEvent) => {
   event.preventDefault();
@@ -20,6 +22,9 @@ const handleWheel = (event: WheelEvent) => {
   }
   animateCards(menus.value, currentIndex.value);
 }
+
+const goToPage = (path: string) => router.push({ path })
+const isActiveMenu = (index: number) => currentIndex.value === index
 
 onMounted(() => {
   window.addEventListener('wheel', handleWheel, { passive: false });
@@ -36,11 +41,14 @@ onUnmounted(() => {
     <div ref='menuContainer' class="menu__container">
       <Menu v-for="(menu, index) in MENUS.reverse()"
             class="menu__item"
+            :class="isActiveMenu(index) ? 'activated' : ''"
             :key="`${menu.subTitle}`"
             :title="menu.title"
             :sub-title="menu.subTitle"
             :img-file-name="menu.imgFileName"
-            :active="currentIndex === index"  />
+            :active="isActiveMenu(index)"
+            @click="goToPage(menu.routePath)"
+      />
     </div>
   </main>
   <footer>
@@ -69,5 +77,8 @@ main {
 .menu__item {
   position: absolute;
   backface-visibility: hidden;
+}
+.activated:hover {
+  cursor: pointer;
 }
 </style>

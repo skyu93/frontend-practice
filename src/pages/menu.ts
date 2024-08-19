@@ -38,7 +38,7 @@ export const MENUS = [
     title: '검색창',
     subTitle: 'Search Bar',
     imgFileName: 'scrolling_pattern',
-    routePath: ''
+    routePath: '/search-bar'
   },
   {
     title: '무한 스크롤',
